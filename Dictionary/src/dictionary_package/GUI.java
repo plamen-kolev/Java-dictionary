@@ -19,24 +19,37 @@ public class GUI extends JPanel {
 	DefaultListModel model;
 	private boolean init = false;
 
-	public void changeWords(Dictionary dict, String url){
-
-		System.out.println("Change words called");
-		dict.readCsv(url);
-		//String[] list_itemItems = dict.getWordsAsArray();
-
+	public void changeWordsXls(Dictionary dict, String path){
+		model.clear();
+		dict.readXls(path);
 		for (String string : dict.getKeys()) {
 			model.addElement(string);
-			System.out.println(string);
 		}
-		System.out.println(model.getSize());
 
 		if(this.init==false){
 
 			list_item = new JList (model);
 			this.init= true;
 		} else {
-			System.out.println("Init has ended long time ago");
+			
+		}
+	}
+	
+	public void changeWordsOnlineCsv(Dictionary dict, String url){
+
+		System.out.println("Change words called");
+		dict.readCsv(url);
+
+		for (String string : dict.getKeys()) {
+			model.addElement(string);
+		}
+
+		if(this.init==false){
+
+			list_item = new JList (model);
+			this.init= true;
+		} else {
+			
 		}
 
 	}
@@ -45,18 +58,14 @@ public class GUI extends JPanel {
 
 		final Dictionary dict = new Dictionary();
 		model = new DefaultListModel();
-		//    	dict.readCsv(System.getProperty("user.dir")+ "\\data.csv");
-		//    	String[] list_itemItems = dict.getWordsAsArray();
-		//    	list_item = new JList (list_itemItems);
 
-		this.changeWords(dict, System.getProperty("user.dir")+ "\\data2.csv");
-		//this.changeWords(dict, System.getProperty("user.dir")+ "\\data2.csv");
-
-		//construct preComponents
+		this.changeWordsOnlineCsv(dict, System.getProperty("user.dir")+ "/data2.csv");
 
 		JMenu fileMenu = new JMenu ("Файл");
-		JMenuItem loadDictionary = new JMenuItem ("Зареди");
-		fileMenu.add (loadDictionary);
+		JMenuItem loadCsvOnline = new JMenuItem ("Зареди CSV файл онлайн");
+		JMenuItem loadLocalXsl = new JMenuItem ("Зареди от локален Ексел файл");
+		fileMenu.add(loadLocalXsl);
+		fileMenu.add (loadCsvOnline);
 		JMenuItem exitItem = new JMenuItem ("Изход");
 		fileMenu.add (exitItem);
 		JMenu helpMenu = new JMenu ("Помощ");
@@ -82,7 +91,6 @@ public class GUI extends JPanel {
 		//set components properties
 		search.setToolTipText ("Напишете думата тук.");
 		list_item.setToolTipText ("Кликнете по дума за нейното значение.");
-
 
 		//adjust size and set layout
 		setPreferredSize (new Dimension (667, 373));
@@ -122,20 +130,25 @@ public class GUI extends JPanel {
 				String searchTerm = jcomp3.getText();
 
 				String definition = dict.getDefinition(searchTerm);
-				if(definition == null){
-					description_box.setText("Думата не бе намерена.");
-				} else {
-					description_box.setText(definition); 
-				}
-
+				if(definition == null){ description_box.setText("Думата не бе намерена.");
+				} else { 	description_box.setText(definition); 	}
+			}
+		});
+		
+		loadCsvOnline.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String input = JOptionPane.showInputDialog(this  ,"Enter in some text:");
+				changeWordsOnlineCsv(dict, input);
 			}
 		});
 
-
-		loadDictionary.addActionListener(new ActionListener(){
+		loadLocalXsl.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String input = JOptionPane.showInputDialog(this  ,"Enter in some text:");
-				changeWords(dict, input);
+				if (input == null){
+					return;
+				}
+				changeWordsXls(dict, input);
 			}
 		});
 

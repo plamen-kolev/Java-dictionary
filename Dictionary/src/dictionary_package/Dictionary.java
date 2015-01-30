@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Dictionary {
 
 	private int totalWords = 0;
-	private Map <String, String> data = new HashMap<String, String>();
+	private Map <String, ArrayList<String>> data = new HashMap<String, ArrayList<String>>();
 
 	public String[] getKeys(){
 		String[] keys = new String[data.size()];
@@ -31,7 +32,7 @@ public class Dictionary {
 	}
 
 	public String getDefinition(String word){
-		String definition = this.data.get(word);
+		String definition = this.data.get(word).get(0);
 		if (definition == null) {
 			return "-1";
 		}
@@ -51,6 +52,7 @@ public class Dictionary {
 
 	// https://gist.github.com/madan712/3912272
 	public void readXls(String path){
+		this.data = new HashMap<String,ArrayList<String>>();
 		InputStream ExcelFileToRead = null;
 		try {
 			ExcelFileToRead = new FileInputStream(path);
@@ -78,6 +80,10 @@ public class Dictionary {
 					
 					cell = (XSSFCell) cells.next();
 					String clarification = cell.getStringCellValue();
+					ArrayList<String> list = new ArrayList<>();
+					list.add(definition);
+					list.add(clarification);
+					this.data.put(word, list);
 					
 					
 				}
@@ -90,7 +96,7 @@ public class Dictionary {
 	}
 
 	public void readCsv(String path){
-		this.data = new HashMap<String,String>();
+		this.data = new HashMap<String,ArrayList<String>>();
 		String csvFile = path;
 		BufferedReader br = null;
 		String line = "";
@@ -100,7 +106,10 @@ public class Dictionary {
 			br = new BufferedReader(new FileReader(csvFile));
 			while ((line = br.readLine()) != null) {
 				String[] word = line.split(cvsSplitBy);
-				this.data.put(word[0], word[1]);				
+				ArrayList data = new ArrayList<>();
+				data.add(word[1]);
+				data.add(word[2]);
+				this.data.put(word[0], data);				
 			}
 
 		} catch (FileNotFoundException e) {
