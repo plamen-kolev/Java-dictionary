@@ -149,11 +149,14 @@ public class GUI extends JPanel {
 
 		loadLocalXsl.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				String input = JOptionPane.showInputDialog(this  ,"Enter in some text:");
-				if (input == null){
-					return;
-				}
-				changeWordsXls(dict, input);
+//				String input = JOptionPane.showInputDialog(this  ,"Enter in some text:");
+				JFileChooser chooser = new JFileChooser();
+				int returnVal = chooser.showOpenDialog(jcomp3);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		       System.out.println("You chose to open this file: " +
+		       chooser.getSelectedFile().getName());
+		       changeWordsXls(dict, chooser.getSelectedFile().getAbsolutePath());
+		    }
 			}
 		});
 
