@@ -30,8 +30,6 @@ public class GUI extends JPanel {
 
 			list_item = new JList (model);
 			this.init= true;
-		} else {
-			
 		}
 	}
 	
@@ -61,27 +59,28 @@ public class GUI extends JPanel {
 
 		this.changeWordsOnlineCsv(dict, System.getProperty("user.dir")+ "/data2.csv");
 
-		JMenu fileMenu = new JMenu ("Файл");
-		JMenuItem loadCsvOnline = new JMenuItem ("Зареди CSV файл онлайн");
-		JMenuItem loadLocalXsl = new JMenuItem ("Зареди от локален Ексел файл");
+		JMenu fileMenu = new JMenu ("File");
+		JMenuItem loadCsvOnline = new JMenuItem ("Load CSV Online");
+		JMenuItem loadLocalXsl = new JMenuItem ("Load local xlsx file");
 		fileMenu.add(loadLocalXsl);
 		fileMenu.add (loadCsvOnline);
-		JMenuItem exitItem = new JMenuItem ("Изход");
+		JMenuItem exitItem = new JMenuItem ("Exit");
 		fileMenu.add (exitItem);
-		JMenu helpMenu = new JMenu ("Помощ");
-		JMenuItem contentsItem = new JMenuItem ("Съдържание");
+		JMenu helpMenu = new JMenu ("Help");
+		JMenuItem contentsItem = new JMenuItem ("Content");
 		helpMenu.add (contentsItem);
-		JMenuItem aboutItem = new JMenuItem ("Инфо");
+		JMenuItem aboutItem = new JMenuItem ("Info");
 		helpMenu.add (aboutItem);
 
 		//construct components
-		search = new JButton ("Търсене");
+		search = new JButton ("Search");
 		final JPanel listPanel = new JPanel();
 
 
 		jcomp3 = new JTextField (5);
 		description_box = new JTextArea (5, 5);
-		description_box.setEditable(false);
+		description_box.setEditable(false);	
+		description_box.setLineWrap(true);
 		jcomp5 = new JMenuBar();
 		jcomp5.add (fileMenu);
 		jcomp5.add (helpMenu);
@@ -89,8 +88,8 @@ public class GUI extends JPanel {
 		hbar = new JScrollPane(list_item);
 		hbar.setBounds(10,45,140,320);
 		//set components properties
-		search.setToolTipText ("Напишете думата тук.");
-		list_item.setToolTipText ("Кликнете по дума за нейното значение.");
+		search.setToolTipText ("Search here.");
+		list_item.setToolTipText ("Click on a word for it's definition.");
 
 		//adjust size and set layout
 		setPreferredSize (new Dimension (667, 373));
@@ -119,8 +118,14 @@ public class GUI extends JPanel {
 					JList source = (JList)event.getSource();
 					String selected = source.getSelectedValue().toString();
 					String definition = dict.getDefinition(selected);
+					String additional = dict.getAdditional(selected);
 					System.out.println(selected);
 					description_box.setText(definition);
+	
+					if (additional.equals("-1")){
+						additional = "No additional information specified.";
+					}
+					description_box.append("\n Additional:\n" + additional);
 				}
 			}
 		});
@@ -130,7 +135,7 @@ public class GUI extends JPanel {
 				String searchTerm = jcomp3.getText();
 
 				String definition = dict.getDefinition(searchTerm);
-				if(definition == null){ description_box.setText("Думата не бе намерена.");
+				if(definition == null){ description_box.setText("Word not found.");
 				} else { 	description_box.setText(definition); 	}
 			}
 		});
@@ -155,7 +160,7 @@ public class GUI extends JPanel {
 	}
 
 	public static void main (String[] args) {
-		JFrame frame = new JFrame ("Речник");
+		JFrame frame = new JFrame ("Dictionary");
 		frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add (new GUI());
 		frame.pack();

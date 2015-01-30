@@ -38,6 +38,14 @@ public class Dictionary {
 		}
 		return definition;
 	}
+	
+	public String getAdditional(String word){
+		String definition = this.data.get(word).get(1);
+		if (definition == null) {
+			return "-1";
+		}
+		return definition;
+	}
 
 	public String[] getWordsAsArray(){
 		String[] result = new String[data.size()];
@@ -77,9 +85,14 @@ public class Dictionary {
 					
 					cell = (XSSFCell) cells.next();
 					String definition = cell.getStringCellValue();
+					String clarification = new String();
+					if(cells.hasNext()){
+						cell = (XSSFCell) cells.next();
+						clarification = cell.getStringCellValue();
+					} else {
+						clarification = null;
+					}
 					
-					cell = (XSSFCell) cells.next();
-					String clarification = cell.getStringCellValue();
 					ArrayList<String> list = new ArrayList<>();
 					list.add(definition);
 					list.add(clarification);
